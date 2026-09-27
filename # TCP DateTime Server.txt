@@ -1,0 +1,39 @@
+# TCP DateTime Server
+import socket
+import datetime
+
+# 1. Create TCP socket
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# 2. Bind server to IP & port
+server_socket.bind(('localhost', 12345))
+server_socket.listen(1)   # Listen for one connection
+print(" TCP Server is running and waiting for client request...")
+
+# 3. Accept connection from client
+conn, address = server_socket.accept()
+print(f"Connected with client: {address}")
+
+while True:
+    # 4. Receive message from client
+    data = conn.recv(1024).decode()
+    if not data:
+        break  # Client closed connection
+
+    print("Received message from client:", data)
+
+    # 5. Get current date & time
+    now = datetime.datetime.now().strftime("Assalamoalaikum %Y-%m-%d %H:%M:%S")
+
+    # 6. Send response to client
+    conn.send(now.encode())
+
+    # 7. Optional: exit condition
+    if data.lower() == "exit":
+        print("Client requested to close connection.")
+        break
+
+# 8. Close sockets
+conn.close()
+server_socket.close()
+print("Server closed.")
